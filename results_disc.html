@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Resultados - Test DISC</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --rojo: #e63946;
+      --amarillo: #ffbe0b;
+      --verde: #06d6a0;
+      --azul: #118ab2;
+      --gris-fondo: #f6f7fb;
+      --blanco: #ffffff;
+      --gris-texto: #333;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--gris-fondo);
+      margin: 0;
+      color: var(--gris-texto);
+    }
+
+    .navbar {
+      background: var(--azul);
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 26px;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: var(--blanco);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    h2 {
+      color: var(--azul);
+      margin-bottom: 20px;
+    }
+
+    canvas {
+      margin: 30px auto;
+      max-width: 600px;
+      background: #fafafa;
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .perfil {
+      margin-top: 30px;
+      text-align: left;
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    .perfil h3 {
+      color: var(--azul);
+    }
+
+    .boton-volver {
+      margin-top: 30px;
+      background: var(--amarillo);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .boton-volver:hover {
+      background: #ffb703;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">Resultados del Test DISC</div>
+
+  <div class="container">
+    <h2 id="nombreUsuario"></h2>
+    <p>Estos son tus resultados en los cuatro factores del modelo DISC:</p>
+
+    <canvas id="graficoDisc"></canvas>
+
+    <div class="perfil">
+      <h3>Tu Perfil DISC:</h3>
+      <p id="interpretacion"></p>
+    </div>
+
+    <button class="boton-volver" onclick="window.location.href='index.html'">Volver al inicio</button>
+  </div>
+
+  <script>
+    // Recuperar nombre del usuario
+    const nombre = localStorage.getItem('userName') || 'Participante';
+    document.getElementById('nombreUsuario').textContent = `Hola, ${nombre}`;
+
+    // Recuperar resultados
+    const datos = JSON.parse(localStorage.getItem('resultadoDISC')) || {D:0, I:0, S:0, C:0};
+
+    const labels = ['D - Dominancia', 'I - Influencia', 'S - Estabilidad', 'C - Cumplimiento'];
+    const valores = [datos.D, datos.I, datos.S, datos.C];
+    const colores = ['#e63946', '#ffbe0b', '#06d6a0', '#118ab2'];
+
+    // Crear gráfica con Chart.js
+    new Chart(document.getElementById('graficoDisc'), {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Puntuación DISC',
+          data: valores,
+          backgroundColor: colores
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: 'Puntos' }
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          title: {
+            display: true,
+            text: 'Resultados de tu perfil DISC'
+          }
+        }
+      }
+    });
+
+    // Interpretación básica según el factor más alto
+    const maxFactor = Object.keys(datos).reduce((a, b) => datos[a] > datos[b] ? a : b);
+    let interpretacion = '';
+
+    switch(maxFactor) {
+      case 'D':
+        interpretacion = `
+          <strong>Dominancia (D)</strong><br>
+          Tiendes a ser una persona decidida, orientada a resultados y segura.
+          Te gusta liderar, asumir retos y tomar decisiones rápidas. 
+          En ocasiones puedes parecer directo o impaciente.
+        `;
+        break;
+      case 'I':
+        interpretacion = `
+          <strong>Influencia (I)</strong><br>
+          Eres comunicativo, entusiasta y persuasivo.
+          Disfrutas trabajar con otras personas, motivar y generar buen ambiente.
+          En algunos momentos puedes perder foco en los detalles.
+        `;
+        break;
+      case 'S':
+        interpretacion = `
+          <strong>Estabilidad (S)</strong><br>
+          Eres paciente, constante y empático.
+          Buscas armonía y estabilidad en tu entorno, y valoras las relaciones sólidas.
+          A veces puedes resistirte a los cambios rápidos.
+        `;
+        break;
+      case 'C':
+        interpretacion = `
+          <strong>Cumplimiento (C)</strong><br>
+          Eres analítico, preciso y cuidadoso con los detalles.
+          Te gusta seguir normas y trabajar con estructura.
+          En ocasiones puedes ser muy exigente contigo o con los demás.
+        `;
+        break;
+      default:
+        interpretacion = "No se ha podido determinar tu perfil principal.";
+    }
+
+    document.getElementById('interpretacion').innerHTML = interpretacion;
+  </script>
+
+</body>
+</html>

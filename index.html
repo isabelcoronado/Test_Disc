@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bienvenida - Test DISC</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --azul: #0052cc;
+      --celeste: #a8caff;
+      --gris-suave: #f5f7fa;
+      --blanco: #ffffff;
+      --gris-texto: #333;
+      --naranja: #ff8c42;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, var(--celeste), var(--gris-suave));
+      color: var(--gris-texto);
+    }
+
+    .navbar {
+      background-color: var(--azul);
+      color: white;
+      padding: 15px 30px;
+      font-size: 28px;
+      font-weight: bold;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    }
+
+    .container {
+      max-width: 420px;
+      margin: 80px auto 40px;
+      background: var(--blanco);
+      padding: 35px;
+      border-radius: 14px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .logo img {
+    width: 200px;     /* antes era 110px */
+    max-width: 90%;
+    margin-bottom: 5px;
+    transition: transform 0.3s ease;
+    }
+
+    h1 {
+      font-size: 1.6em;
+      color: var(--azul);
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 0.95em;
+      margin-bottom: 20px;
+      color: #555;
+    }
+
+    label {
+      display: block;
+      text-align: left;
+      margin-bottom: 5px;
+      font-weight: 600;
+      font-size: 0.9em;
+      color: var(--azul);
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      font-size: 0.95em;
+      border: 1.5px solid var(--azul);
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      background: var(--naranja);
+      color: white;
+      border: none;
+      padding: 10px;
+      font-size: 1em;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background: #e27834;
+    }
+
+    #colaboradores {
+      max-width: 800px;
+      margin: 40px auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 25px;
+      padding: 0 15px;
+    }
+
+    .collaborator {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      padding: 15px;
+      width: 220px;
+      text-align: center;
+    }
+
+    .collaborator-img {
+      width: 85px;
+      height: 85px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 10px;
+    }
+
+    .collaborator h3 {
+      font-size: 1em;
+      margin-bottom: 5px;
+      color: var(--azul);
+    }
+
+    .collaborator p {
+      font-size: 0.85em;
+      margin: 0 0 6px;
+      line-height: 1.3;
+    }
+
+    .footer {
+      background-color: var(--azul);
+      color: white;
+      text-align: center;
+      padding: 20px;
+      font-size: 0.8em;
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    Test DISC – Perfil del Comportamiento
+  </div>
+
+  <div class="container">
+    <div class="logo">
+      <img src="static/disc_logo.png" alt="Logo DISC" />
+    </div>
+    <h1>Bienvenido al Test DISC</h1>
+    <p>Ingresa tus datos para comenzar tu evaluación de perfil comportamental.</p>
+
+    <form id="welcomeForm">
+      <label for="nombre">Nombre</label>
+      <input type="text" id="nombre" name="nombre" placeholder="Tu Nombre" required />
+
+      <label for="correo">Correo</label>
+      <input type="email" id="correo" name="correo" placeholder="Tu Correo" required />
+
+      <button type="submit">Comenzar Test</button>
+    </form>
+  </div>
+
+  <div id="colaboradores">
+    <div class="collaborator">
+      <img src="static/william_moulton.png" alt="William Marston" class="collaborator-img" />
+      <h3>William M. Marston</h3>
+      <p><strong>Creador del Modelo DISC</strong></p>
+      <p>Psicólogo y teórico del comportamiento humano.</p>
+    </div>
+    <div class="collaborator">
+      <img src="static/daniel_moraga.png" alt="Mentor DISC" class="collaborator-img" />
+      <h3>Daniel Moraga Martínez  Mentor DISC</h3>
+      <p><strong>Coach de Comportamiento y Liderazgo</strong></p>
+      <p>Especialista en desarrollo de equipos y autoconocimiento.</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    &copy; 2025 Todos los derechos reservados.
+  </div>
+
+  <script>
+    document.getElementById('welcomeForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const nombre = document.getElementById('nombre').value.trim();
+      const correo = document.getElementById('correo').value.trim().toLowerCase();
+
+      if (!nombre || !correo) {
+        alert('Por favor, completa todos los campos');
+        return;
+      }
+
+      localStorage.setItem('userName', nombre);
+      localStorage.setItem('correoUsuario', correo);
+
+      // Redirige al test DISC
+      window.location.href = 'disc_test.html';
+    });
+  </script>
+
+</body>
+</html>

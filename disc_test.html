@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Test DISC - Evaluación</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --rojo: #e63946;
+      --amarillo: #ffbe0b;
+      --verde: #06d6a0;
+      --azul: #118ab2;
+      --gris-fondo: #f7f8fa;
+      --gris-texto: #333;
+      --blanco: #fff;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--gris-fondo);
+      margin: 0;
+      color: var(--gris-texto);
+    }
+
+    .navbar {
+      background: var(--azul);
+      color: white;
+      padding: 15px;
+      font-size: 24px;
+      text-align: center;
+      font-weight: bold;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: var(--blanco);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.8s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      text-align: center;
+      color: var(--azul);
+      margin-bottom: 25px;
+    }
+
+    .grupo {
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .grupo:hover {
+      box-shadow: 0 0 10px rgba(17, 138, 178, 0.2);
+    }
+
+    .grupo h3 {
+      font-size: 1.1em;
+      color: var(--azul);
+      margin-bottom: 10px;
+    }
+
+    .opcion {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      transition: background 0.3s ease;
+    }
+
+    .simbolo {
+      font-size: 18px;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    .mas, .menos {
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 5px;
+      font-size: 0.9em;
+      border: 2px solid transparent;
+      color: white;
+      transition: all 0.25s ease-in-out;
+    }
+
+    .mas { background-color: var(--verde); }
+    .menos { background-color: var(--rojo); }
+
+    .mas:hover {
+      background-color: #08c68e;
+    }
+
+    .menos:hover {
+      background-color: #d62828;
+    }
+
+    /* 🔆 SELECCIÓN VISUAL DESTACADA (MÁS Y MENOS EN AMARILLO) */
+    .mas.selected,
+    .menos.selected {
+      border: 2px solid var(--amarillo);
+      box-shadow: 0 0 10px var(--amarillo);
+      background-color: #ffe066;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .boton-enviar {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background: var(--amarillo);
+      border: none;
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #333;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 25px;
+      transition: all 0.3s ease;
+    }
+
+    .boton-enviar:hover {
+      background: #ffb703;
+      transform: scale(1.03);
+    }
+
+    .mas:active, .menos:active, .boton-enviar:active {
+      transform: scale(0.97);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    Test DISC – Evaluación
+  </div>
+
+  <div class="container">
+    <h2>Selecciona una palabra que MÁS te representa y una que MENOS te representa en cada grupo</h2>
+
+    <form id="discForm"></form>
+
+    <button class="boton-enviar" type="button" onclick="enviarRespuestas()">Ver Resultados</button>
+  </div>
+
+  <script src="js/disc_test.js"></script>
+
+</body>
+</html>
