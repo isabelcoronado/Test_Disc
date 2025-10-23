@@ -47,29 +47,22 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    h2 {
-      text-align: center;
-      color: var(--azul);
-      margin-bottom: 25px;
-    }
-
     .instrucciones {
-      background: #f1f9ff;
+      background: #e3f2fd;
       border-left: 5px solid var(--azul);
       padding: 15px 20px;
-      margin-bottom: 25px;
       border-radius: 8px;
-      font-size: 0.95em;
-      color: #333;
+      margin-bottom: 25px;
     }
 
-    .instrucciones ul {
-      margin: 10px 0 0 20px;
-      padding: 0;
+    .instrucciones h2 {
+      color: var(--azul);
+      margin-top: 0;
     }
 
-    .instrucciones li {
-      margin: 5px 0;
+    h3 {
+      color: var(--azul);
+      font-size: 1.1em;
     }
 
     .grupo {
@@ -84,32 +77,19 @@
       box-shadow: 0 0 10px rgba(17, 138, 178, 0.2);
     }
 
-    .grupo h3 {
-      font-size: 1.1em;
-      color: var(--azul);
-      margin-bottom: 10px;
-    }
-
     .opcion {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 6px 0;
-      gap: 10px;
+      margin: 8px 0;
     }
 
-    .opcion label {
-      flex-grow: 1;
-    }
-
-    .opcion input {
-      width: 60px;
-      padding: 5px;
-      border: 1px solid #ccc;
+    select {
+      padding: 6px;
       border-radius: 6px;
-      text-align: center;
-      font-weight: bold;
-      font-size: 1em;
+      border: 1px solid #ccc;
+      font-size: 0.9em;
+      width: 80px;
     }
 
     .boton-enviar {
@@ -142,13 +122,11 @@
   <div class="navbar">Test DISC – Evaluación</div>
 
   <div class="container">
-    <h2>Test DISC - Evaluación</h2>
-
     <div class="instrucciones">
-      <h3>Instrucciones:</h3>
+      <h2>Instrucciones:</h2>
       <p>
         A continuación verás <strong>14 grupos de frases</strong>.  
-        Cada grupo contiene 4 frases, y deberás asignarles los números del <strong>1 al 4</strong> según tu afinidad personal.  
+        Cada grupo contiene 4 frases y deberás asignarles los números del <strong>1 al 4</strong> según tu afinidad personal.  
         Solo puedes usar cada número una vez por grupo.
       </p>
       <ul>
@@ -159,80 +137,75 @@
       </ul>
     </div>
 
-    <form id="discForm"></form>
+    <form id="discForm">
+      <!-- Los 14 grupos -->
+      <div class="grupo" data-grupo="1">
+        <h3>Grupo 1</h3>
+        <div class="opcion">● Entusiasta <select><option value=""></option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+        <div class="opcion">▲ Atrevido <select><option value=""></option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+        <div class="opcion">✚ Concienzudo <select><option value=""></option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+        <div class="opcion">■ Amigable <select><option value=""></option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+      </div>
+
+      <div class="grupo" data-grupo="2">
+        <h3>Grupo 2</h3>
+        <div class="opcion">● Valiente <select><option value=""></option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+        <div class="opcion">▲ Alegre <select><option value=""></option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+        <div class="opcion">✚ Preciso <select><option value=""></option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+        <div class="opcion">■ Paciente <select><option value=""></option><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+      </div>
+
+      <!-- Repite este bloque hasta el grupo 14 -->
+      <!-- Puedes copiar/pegar y reemplazar las frases correspondientes -->
+
+    </form>
 
     <button class="boton-enviar" type="button" onclick="enviarRespuestas()">Ver Resultados</button>
   </div>
 
   <script>
-    // 🔹 EJEMPLO DE PREGUNTAS (puedes reemplazarlas con tus 14 grupos reales)
-    const grupos = [
-      [
-        "Me gusta tomar el mando",
-        "Me gusta ser el alma del grupo",
-        "Me gusta mantener la calma",
-        "Me gusta seguir las reglas"
-      ],
-      [
-        "Soy competitivo y decidido",
-        "Disfruto socializar y animar a otros",
-        "Prefiero ambientes tranquilos",
-        "Sigo los procedimientos al pie de la letra"
-      ]
-      // Agrega los 12 grupos restantes aquí...
-    ];
+    function enviarRespuestas() {
+      const grupos = document.querySelectorAll('.grupo');
+      const resultados = { D: 0, I: 0, S: 0, C: 0 };
 
-    const form = document.getElementById('discForm');
-
-    grupos.forEach((opciones, index) => {
-      const grupoDiv = document.createElement('div');
-      grupoDiv.className = 'grupo';
-      grupoDiv.innerHTML = `<h3>Grupo ${index + 1} de ${grupos.length}</h3>`;
-
-      opciones.forEach((texto, i) => {
-        const opcion = document.createElement('div');
-        opcion.className = 'opcion';
-        opcion.innerHTML = `
-          <label>${texto}</label>
-          <input type="number" min="1" max="4" step="1" required />
-        `;
-        grupoDiv.appendChild(opcion);
-      });
-
-      form.appendChild(grupoDiv);
-    });
-
-    // 🔹 Validar que no se repitan valores dentro de un grupo
-    form.addEventListener('input', (e) => {
-      if (e.target.type === 'number') {
-        const grupoDiv = e.target.closest('.grupo');
-        const inputs = grupoDiv.querySelectorAll('input[type="number"]');
-        const valores = Array.from(inputs).map(i => i.value).filter(v => v !== '');
+      for (const grupo of grupos) {
+        const valores = Array.from(grupo.querySelectorAll('select')).map(s => s.value);
+        if (valores.includes("")) {
+          alert("Completa todos los valores del grupo " + grupo.dataset.grupo);
+          return;
+        }
         const repetidos = valores.filter((v, i, a) => a.indexOf(v) !== i);
         if (repetidos.length > 0) {
-          alert('⚠️ No puedes repetir el mismo número dentro de este grupo.');
-          e.target.value = '';
+          alert("No puedes repetir números en el grupo " + grupo.dataset.grupo);
+          return;
         }
+
+        // Mapeo simbólico: ●=I, ▲=D, ✚=C, ■=S
+        const selects = grupo.querySelectorAll('select');
+        resultados.I += 5 - parseInt(selects[0].value);
+        resultados.D += 5 - parseInt(selects[1].value);
+        resultados.C += 5 - parseInt(selects[2].value);
+        resultados.S += 5 - parseInt(selects[3].value);
       }
-    });
 
-    // 🔹 Guardar resultados en localStorage
-    function enviarRespuestas() {
-      const resultados = [];
-
-      document.querySelectorAll('.grupo').forEach((grupoDiv, index) => {
-        const valores = Array.from(grupoDiv.querySelectorAll('input')).map(i => Number(i.value));
-        if (valores.includes(0) || valores.includes(NaN) || valores.length < 4) {
-          alert(`⚠️ Debes completar todos los valores del grupo ${index + 1}.`);
-          throw new Error('Grupo incompleto');
-        }
-        resultados.push(valores);
-      });
-
-      localStorage.setItem('respuestasDISC', JSON.stringify(resultados));
-      alert("✅ Tus respuestas fueron guardadas. Se mostrarán los resultados.");
+      localStorage.setItem("resultadoDISC", JSON.stringify(resultados));
       window.location.href = "results_disc.html";
     }
+
+    // Validación visual dinámica
+    document.querySelectorAll('.grupo').forEach(grupo => {
+      const selects = grupo.querySelectorAll('select');
+      selects.forEach(select => {
+        select.addEventListener('change', () => {
+          const valores = Array.from(selects).map(s => s.value).filter(v => v);
+          const repetidos = valores.filter((v, i, a) => a.indexOf(v) !== i);
+          if (repetidos.length > 0) {
+            alert("⚠️ No puedes repetir el mismo número en este grupo.");
+            select.value = "";
+          }
+        });
+      });
+    });
   </script>
 </body>
 </html>
