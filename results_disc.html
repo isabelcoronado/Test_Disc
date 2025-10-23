@@ -5,6 +5,7 @@
   <title>Resultados - Test DISC</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <style>
     :root {
       --rojo: #e63946;
@@ -67,18 +68,20 @@
       color: var(--azul);
     }
 
-    .boton-volver {
-      margin-top: 30px;
+    #btnEnviar {
+      margin-top: 25px;
       background: var(--amarillo);
       border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
-      font-size: 1em;
+      padding: 12px 25px;
+      border-radius: 8px;
+      font-size: 1.1em;
       font-weight: bold;
       cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: background-color 0.3s ease;
     }
 
-    .boton-volver:hover {
+    #btnEnviar:hover {
       background: #ffb703;
     }
   </style>
@@ -98,22 +101,24 @@
       <p id="interpretacion"></p>
     </div>
 
-    <button class="boton-volver" onclick="window.location.href='index.html'">Volver al inicio</button>
+    <button id="btnEnviar">Guardar y Enviar Resultados</button>
   </div>
 
   <script>
+    // Inicializar EmailJS
+    emailjs.init("CqmPR984rH-Xseo1l");
+
     // Recuperar nombre del usuario
     const nombre = localStorage.getItem('userName') || 'Participante';
     document.getElementById('nombreUsuario').textContent = `Hola, ${nombre}`;
 
-    // Recuperar resultados
+    // Recuperar resultados DISC
     const datos = JSON.parse(localStorage.getItem('resultadoDISC')) || {D:0, I:0, S:0, C:0};
-
     const labels = ['D - Dominancia', 'I - Influencia', 'S - Estabilidad', 'C - Cumplimiento'];
     const valores = [datos.D, datos.I, datos.S, datos.C];
     const colores = ['#e63946', '#ffbe0b', '#06d6a0', '#118ab2'];
 
-    // Crear gráfica con Chart.js
+    // Crear gráfica
     new Chart(document.getElementById('graficoDisc'), {
       type: 'bar',
       data: {
@@ -134,15 +139,12 @@
         },
         plugins: {
           legend: { display: false },
-          title: {
-            display: true,
-            text: 'Resultados de tu perfil DISC'
-          }
+          title: { display: true, text: 'Resultados de tu perfil DISC' }
         }
       }
     });
 
-    // Interpretación básica según el factor más alto
+    // Interpretación según el factor más alto
     const maxFactor = Object.keys(datos).reduce((a, b) => datos[a] > datos[b] ? a : b);
     let interpretacion = '';
 
@@ -151,7 +153,7 @@
         interpretacion = `
           <strong>Dominancia (D)</strong><br>
           Tiendes a ser una persona decidida, orientada a resultados y segura.
-          Te gusta liderar, asumir retos y tomar decisiones rápidas. 
+          Te gusta liderar, asumir retos y tomar decisiones rápidas.
           En ocasiones puedes parecer directo o impaciente.
         `;
         break;
@@ -184,7 +186,44 @@
     }
 
     document.getElementById('interpretacion').innerHTML = interpretacion;
-  </script>
 
+    // Enviar resultados por correo al hacer clic
+    document.getElementById('btnEnviar').addEventListener('click', () => {
+      const correoUsuario = localStorage.getItem('correoUsuario');
+      const nombreUsuario = localStorage.getItem('userName') || "Usuario";
+
+      if (!correoUsuario) {
+        alert("⚠️ No se encontró un correo guardado. Regresa al inicio e ingrésalo antes de continuar.");
+        return;
+      }
+
+      const resumen = `
+Resultados del Test DISC
+
+Dominancia (D): ${datos.D}
+Influencia (I): ${datos.I}
+Estabilidad (S): ${datos.S}
+Cumplimiento (C): ${datos.C}
+
+Perfil principal: ${maxFactor}
+Interpretación:
+${interpretacion.replace(/<[^>]*>/g, '')}
+      `;
+
+      emailjs.send('Test_Discdm', 'template_Discdm', {
+        user_email: correoUsuario,
+        user_name: nombreUsuario,
+        user_resultado: resumen,
+        nombre_empresa: "CYM Consultoría RRHH"
+      })
+      .then(() => {
+        alert("✅ Resultados DISC enviados correctamente a tu correo.");
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("❌ Error al enviar el correo. Verifica tu configuración de EmailJS.");
+      });
+    });
+  </script>
 </body>
 </html>
