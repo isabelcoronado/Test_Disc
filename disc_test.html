@@ -53,6 +53,25 @@
       margin-bottom: 25px;
     }
 
+    .instrucciones {
+      background: #f1f9ff;
+      border-left: 5px solid var(--azul);
+      padding: 15px 20px;
+      margin-bottom: 25px;
+      border-radius: 8px;
+      font-size: 0.95em;
+      color: #333;
+    }
+
+    .instrucciones ul {
+      margin: 10px 0 0 20px;
+      padding: 0;
+    }
+
+    .instrucciones li {
+      margin: 5px 0;
+    }
+
     .grupo {
       border: 1px solid #ddd;
       padding: 15px;
@@ -76,44 +95,21 @@
       justify-content: space-between;
       align-items: center;
       padding: 6px 0;
-      transition: background 0.3s ease;
+      gap: 10px;
     }
 
-    .simbolo {
-      font-size: 18px;
+    .opcion label {
+      flex-grow: 1;
+    }
+
+    .opcion input {
+      width: 60px;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      text-align: center;
       font-weight: bold;
-      margin-right: 10px;
-    }
-
-    .mas, .menos {
-      cursor: pointer;
-      padding: 6px 12px;
-      border-radius: 5px;
-      font-size: 0.9em;
-      border: 2px solid transparent;
-      color: white;
-      transition: all 0.25s ease-in-out;
-    }
-
-    .mas { background-color: var(--verde); }
-    .menos { background-color: var(--rojo); }
-
-    .mas:hover {
-      background-color: #08c68e;
-    }
-
-    .menos:hover {
-      background-color: #d62828;
-    }
-
-    /* 🔆 SELECCIÓN VISUAL DESTACADA (MÁS Y MENOS EN AMARILLO) */
-    .mas.selected,
-    .menos.selected {
-      border: 2px solid var(--amarillo);
-      box-shadow: 0 0 10px var(--amarillo);
-      background-color: #ffe066;
-      color: #333;
-      font-weight: bold;
+      font-size: 1em;
     }
 
     .boton-enviar {
@@ -136,26 +132,107 @@
       transform: scale(1.03);
     }
 
-    .mas:active, .menos:active, .boton-enviar:active {
+    .boton-enviar:active {
       transform: scale(0.97);
     }
   </style>
 </head>
 <body>
 
-  <div class="navbar">
-    Test DISC – Evaluación
-  </div>
+  <div class="navbar">Test DISC – Evaluación</div>
 
   <div class="container">
-    <h2>Selecciona una palabra que MÁS te representa y una que MENOS te representa en cada grupo</h2>
+    <h2>Test DISC - Evaluación</h2>
+
+    <div class="instrucciones">
+      <h3>Instrucciones:</h3>
+      <p>
+        A continuación verás <strong>14 grupos de frases</strong>.  
+        Cada grupo contiene 4 frases, y deberás asignarles los números del <strong>1 al 4</strong> según tu afinidad personal.  
+        Solo puedes usar cada número una vez por grupo.
+      </p>
+      <ul>
+        <li><strong>1</strong> = Te representa más</li>
+        <li><strong>2</strong> = Te representa bastante</li>
+        <li><strong>3</strong> = Te representa poco</li>
+        <li><strong>4</strong> = Te representa menos</li>
+      </ul>
+    </div>
 
     <form id="discForm"></form>
 
     <button class="boton-enviar" type="button" onclick="enviarRespuestas()">Ver Resultados</button>
   </div>
 
-  <script src="js/disc_test.js"></script>
+  <script>
+    // 🔹 EJEMPLO DE PREGUNTAS (puedes reemplazarlas con tus 14 grupos reales)
+    const grupos = [
+      [
+        "Me gusta tomar el mando",
+        "Me gusta ser el alma del grupo",
+        "Me gusta mantener la calma",
+        "Me gusta seguir las reglas"
+      ],
+      [
+        "Soy competitivo y decidido",
+        "Disfruto socializar y animar a otros",
+        "Prefiero ambientes tranquilos",
+        "Sigo los procedimientos al pie de la letra"
+      ]
+      // Agrega los 12 grupos restantes aquí...
+    ];
 
+    const form = document.getElementById('discForm');
+
+    grupos.forEach((opciones, index) => {
+      const grupoDiv = document.createElement('div');
+      grupoDiv.className = 'grupo';
+      grupoDiv.innerHTML = `<h3>Grupo ${index + 1} de ${grupos.length}</h3>`;
+
+      opciones.forEach((texto, i) => {
+        const opcion = document.createElement('div');
+        opcion.className = 'opcion';
+        opcion.innerHTML = `
+          <label>${texto}</label>
+          <input type="number" min="1" max="4" step="1" required />
+        `;
+        grupoDiv.appendChild(opcion);
+      });
+
+      form.appendChild(grupoDiv);
+    });
+
+    // 🔹 Validar que no se repitan valores dentro de un grupo
+    form.addEventListener('input', (e) => {
+      if (e.target.type === 'number') {
+        const grupoDiv = e.target.closest('.grupo');
+        const inputs = grupoDiv.querySelectorAll('input[type="number"]');
+        const valores = Array.from(inputs).map(i => i.value).filter(v => v !== '');
+        const repetidos = valores.filter((v, i, a) => a.indexOf(v) !== i);
+        if (repetidos.length > 0) {
+          alert('⚠️ No puedes repetir el mismo número dentro de este grupo.');
+          e.target.value = '';
+        }
+      }
+    });
+
+    // 🔹 Guardar resultados en localStorage
+    function enviarRespuestas() {
+      const resultados = [];
+
+      document.querySelectorAll('.grupo').forEach((grupoDiv, index) => {
+        const valores = Array.from(grupoDiv.querySelectorAll('input')).map(i => Number(i.value));
+        if (valores.includes(0) || valores.includes(NaN) || valores.length < 4) {
+          alert(`⚠️ Debes completar todos los valores del grupo ${index + 1}.`);
+          throw new Error('Grupo incompleto');
+        }
+        resultados.push(valores);
+      });
+
+      localStorage.setItem('respuestasDISC', JSON.stringify(resultados));
+      alert("✅ Tus respuestas fueron guardadas. Se mostrarán los resultados.");
+      window.location.href = "results_disc.html";
+    }
+  </script>
 </body>
 </html>
